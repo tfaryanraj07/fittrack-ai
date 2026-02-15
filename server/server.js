@@ -10,7 +10,7 @@ const workoutRoutes = require("./routes/workoutRoutes");
 
 const app = express();
 app.use(cors({
-  origin: "https://fittrack-ai-xi.vercel.app/",
+  origin: "http://localhost:5173",
   credentials: true
 }));
 
