@@ -29,6 +29,8 @@ function Progress() {
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user"));
 
+  const API = import.meta.env.VITE_API_URL;
+
   const [workouts, setWorkouts] = useState([]);
   const [form, setForm] = useState({
     exercise: "",
@@ -39,48 +41,63 @@ function Progress() {
     muscleGroup: "chest",
   });
 
+  // 🔥 Fetch Workouts
   const fetchWorkouts = async () => {
-    const res = await axios.get(
-      "http://localhost:5000/api/workouts",
-      { headers: { Authorization: token } }
-    );
-    setWorkouts(res.data);
+    try {
+      const res = await axios.get(
+        `${API}/api/workouts`,
+        { headers: { Authorization: token } }
+      );
+      setWorkouts(res.data);
+    } catch (err) {
+      console.error("Error fetching workouts:", err);
+    }
   };
 
+  // 🔥 Add Workout
   const addWorkout = async (e) => {
     e.preventDefault();
 
-    await axios.post(
-      "http://localhost:5000/api/workouts",
-      {
-        exercise: form.exercise,
-        sets: Number(form.sets),
-        reps: Number(form.reps),
-        weight: Number(form.weight),
-        goalType: form.goalType,
-        muscleGroup: form.muscleGroup,
-      },
-      { headers: { Authorization: token } }
-    );
+    try {
+      await axios.post(
+        `${API}/api/workouts`,
+        {
+          exercise: form.exercise,
+          sets: Number(form.sets),
+          reps: Number(form.reps),
+          weight: Number(form.weight),
+          goalType: form.goalType,
+          muscleGroup: form.muscleGroup,
+        },
+        { headers: { Authorization: token } }
+      );
 
-    setForm({
-      exercise: "",
-      sets: "",
-      reps: "",
-      weight: "",
-      goalType: user?.goal,
-      muscleGroup: "chest",
-    });
+      setForm({
+        exercise: "",
+        sets: "",
+        reps: "",
+        weight: "",
+        goalType: user?.goal,
+        muscleGroup: "chest",
+      });
 
-    fetchWorkouts();
+      fetchWorkouts();
+    } catch (err) {
+      console.error("Error adding workout:", err);
+    }
   };
 
+  // 🔥 Delete Workout
   const deleteWorkout = async (id) => {
-    await axios.delete(
-      `http://localhost:5000/api/workouts/${id}`,
-      { headers: { Authorization: token } }
-    );
-    fetchWorkouts();
+    try {
+      await axios.delete(
+        `${API}/api/workouts/${id}`,
+        { headers: { Authorization: token } }
+      );
+      fetchWorkouts();
+    } catch (err) {
+      console.error("Error deleting workout:", err);
+    }
   };
 
   useEffect(() => {
@@ -110,27 +127,35 @@ function Progress() {
     ],
   };
 
-  // 🔥 Strength Progression
+  // 🔥 Strength Progression Chart
   const strengthChart = {
     labels: workouts.map((w) =>
       new Date(w.date).toLocaleDateString()
     ),
     datasets: [
       {
-        label: "Strength",
+        label: "Strength (kg)",
         data: workouts.map((w) => w.weight),
         borderColor: "#00c6ff",
+        backgroundColor: "rgba(0,198,255,0.2)",
+        tension: 0.3,
       },
     ],
   };
 
   return (
-    <motion.div className="container">
-      <h2>📊 Advanced Progress</h2>
+    <motion.div
+      className="container"
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <h2>📊 Advanced Progress Analytics</h2>
 
-      {/* Add Exercise */}
+      {/* 🔥 Add Exercise */}
       <div className="card">
-        <h3>Add Exercise</h3>
+        <h3>➕ Add Exercise</h3>
+
         <form onSubmit={addWorkout}>
           <input
             placeholder="Exercise"
@@ -139,6 +164,7 @@ function Progress() {
               setForm({ ...form, exercise: e.target.value })
             }
           />
+
           <input
             placeholder="Sets"
             value={form.sets}
@@ -146,6 +172,7 @@ function Progress() {
               setForm({ ...form, sets: e.target.value })
             }
           />
+
           <input
             placeholder="Reps"
             value={form.reps}
@@ -153,8 +180,9 @@ function Progress() {
               setForm({ ...form, reps: e.target.value })
             }
           />
+
           <input
-            placeholder="Weight"
+            placeholder="Weight (kg)"
             value={form.weight}
             onChange={(e) =>
               setForm({ ...form, weight: e.target.value })
@@ -178,12 +206,14 @@ function Progress() {
         </form>
       </div>
 
-      {/* Delete + PR */}
+      {/* 🔥 Exercise List */}
       <div className="card">
-        <h3>Exercises</h3>
+        <h3>🏋 Logged Exercises</h3>
+        {workouts.length === 0 && <p>No workouts yet.</p>}
+
         {workouts.map((w) => (
-          <div key={w._id}>
-            {w.exercise} ({w.muscleGroup}) - {w.weight}kg
+          <div key={w._id} style={{ marginBottom: "10px" }}>
+            {w.exercise} ({w.muscleGroup}) — {w.weight}kg
             <button
               onClick={() => deleteWorkout(w._id)}
               style={{ marginLeft: "10px" }}
@@ -194,48 +224,42 @@ function Progress() {
         ))}
       </div>
 
-      {/* Muscle Pie */}
-     <div className="card" style={{ marginTop: "30px" }}>
-  <h3>Muscle Distribution</h3>
+      {/* 🔥 Muscle Pie */}
+      <div className="card" style={{ marginTop: "30px" }}>
+        <h3>💪 Muscle Distribution</h3>
 
-  <div
-    className="pie-wrapper"
-    style={{
-      width: "100%",
-      maxWidth: "450px",
-      height: "350px",
-      margin: "0 auto",
-      transition: "0.4s ease",
-    }}
-  >
-    {workouts.length > 0 && (
-      <Pie
-        data={pieData}
-        options={{
-          maintainAspectRatio: false,
-          responsive: true,
-          plugins: {
-            legend: {
-              position: "bottom",
-              labels: {
-                color: "#fff",
-                padding: 15,
-              },
-            },
-          },
-          animation: {
-            animateScale: true,
-            animateRotate: true,
-          },
-        }}
-      />
-    )}
-  </div>
+        <div
+          className="pie-wrapper"
+          style={{
+            width: "100%",
+            maxWidth: "450px",
+            height: "350px",
+            margin: "0 auto",
+          }}
+        >
+          {workouts.length > 0 && (
+            <Pie
+              data={pieData}
+              options={{
+                maintainAspectRatio: false,
+                responsive: true,
+                plugins: {
+                  legend: {
+                    position: "bottom",
+                    labels: {
+                      color: "#fff",
+                    },
+                  },
+                },
+              }}
+            />
+          )}
+        </div>
       </div>
 
-      {/* Strength */}
+      {/* 🔥 Strength Curve */}
       <div className="card">
-        <h3>Strength Curve</h3>
+        <h3>📈 Strength Progression</h3>
         {workouts.length > 0 && <Line data={strengthChart} />}
       </div>
     </motion.div>
