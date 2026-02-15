@@ -10,7 +10,10 @@ const workoutRoutes = require("./routes/workoutRoutes");
 
 const app = express();
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: [
+    "http://localhost:5173",
+    "https://fhf.netlify.app"
+  ],
   credentials: true
 }));
 
