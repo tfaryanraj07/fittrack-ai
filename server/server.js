@@ -12,10 +12,11 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://fhf.netlify.app"
+    "https://ephemeral-cactus-7f83f4.netlify.app"
   ],
   credentials: true
 }));
+
 
 app.use(express.json());
 app.use("/api/workouts", workoutRoutes);
