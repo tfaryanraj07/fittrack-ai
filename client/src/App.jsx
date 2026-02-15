@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Register from "./Register";
-import Login from "./login";
+import Login from "./Login";
 import ProtectedRoute from "./ProtectedRoute";
 import Dashboard from "./Dashboard";
 import Progress from "./Progress";
