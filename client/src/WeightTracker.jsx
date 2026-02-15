@@ -28,7 +28,7 @@ function WeightTracker() {
 
   const fetchWeights = async () => {
     const res = await axios.get(
-      "http://localhost:5000/api/weight",
+      "http://`${import.meta.env.VITE_API_URL}/api/weight",
       {
         headers: { Authorization: token },
       }
@@ -40,7 +40,7 @@ function WeightTracker() {
     e.preventDefault();
 
     await axios.post(
-      "http://localhost:5000/api/weight",
+      "http://`${import.meta.env.VITE_API_URL}/api/weight",
       { weight: Number(weight) },
       { headers: { Authorization: token } }
     );

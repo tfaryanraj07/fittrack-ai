@@ -41,7 +41,7 @@ function Progress() {
 
   const fetchWorkouts = async () => {
     const res = await axios.get(
-      "http://localhost:5000/api/workouts",
+      "http:// `${import.meta.env.VITE_API_URL}/api/workouts",
       { headers: { Authorization: token } }
     );
     setWorkouts(res.data);
@@ -51,7 +51,7 @@ function Progress() {
     e.preventDefault();
 
     await axios.post(
-      "http://localhost:5000/api/workouts",
+      "http:// `${import.meta.env.VITE_API_URL}/api/workouts",
       {
         exercise: form.exercise,
         sets: Number(form.sets),
@@ -77,7 +77,7 @@ function Progress() {
 
   const deleteWorkout = async (id) => {
     await axios.delete(
-      `http://localhost:5000/api/workouts/${id}`,
+      `http://`${import.meta.env.VITE_API_URL}/api/workouts/${id}`,
       { headers: { Authorization: token } }
     );
     fetchWorkouts();

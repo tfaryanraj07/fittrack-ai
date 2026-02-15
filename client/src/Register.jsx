@@ -8,7 +8,7 @@ function Register() {
     e.preventDefault();
     try {
       await axios.post(
-        "http://localhost:5000/api/auth/register",
+        "http://`${import.meta.env.VITE_API_URL}/api/auth/register",
         form
       );
       alert("Registered Successfully!");

@@ -33,7 +33,8 @@ function Dashboard() {
 
   const fetchWorkouts = async () => {
     const res = await axios.get(
-      "http://localhost:5000/api/workouts",
+  `${import.meta.env.VITE_API_URL}/api/workouts`,
+
       {
         headers: { Authorization: token },
       }

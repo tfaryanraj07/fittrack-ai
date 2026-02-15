@@ -19,7 +19,7 @@ function Profile() {
   const handleUpdate = async () => {
     try {
       const res = await axios.put(
-        "http://localhost:5000/api/auth/update",
+        "http:// `${import.meta.env.VITE_API_URL}/api/auth/update",
         form,
         { headers: { Authorization: token } }
       );
@@ -35,7 +35,7 @@ function Profile() {
   const handleChangePassword = async () => {
     try {
       await axios.put(
-        "http://localhost:5000/api/auth/change-password",
+        "http:// `${import.meta.env.VITE_API_URL}/api/auth/change-password",
         passwordData,
         { headers: { Authorization: token } }
       );
