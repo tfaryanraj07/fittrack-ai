@@ -76,10 +76,11 @@ function Progress() {
   };
 
   const deleteWorkout = async (id) => {
-    await axios.delete(
-      `http://`${import.meta.env.VITE_API_URL}/api/workouts/${id}`,
-      { headers: { Authorization: token } }
-    );
+   await axios.delete(
+  `${import.meta.env.VITE_API_URL}/api/workouts/${id}`,
+  { headers: { Authorization: token } }
+);
+
     fetchWorkouts();
   };
 
